@@ -52,7 +52,7 @@ public class MultithreadingWithdrowFromOneAccountTest {
         accountsService.createAccount(account1);
         accountsService.createAccount(account2);
 
-        accountsService.creditBalanceAccount(ACCOUNT_NAME_1, ACCOUNT_1_AMOUNT);
+        accountsService.creditBalanceAccount(account1, ACCOUNT_1_AMOUNT);
 
         assertEquals(accountsService.getAccount(ACCOUNT_NAME_1).getBalance(), ACCOUNT_1_AMOUNT);
         assertEquals(accountsService.getAccount(ACCOUNT_NAME_2).getBalance(), ACCOUNT_2_AMOUNT);

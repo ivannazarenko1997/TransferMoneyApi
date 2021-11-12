@@ -18,15 +18,15 @@ public interface AccountsService {
 
     List<Account> getAllAccount();
 
-    void creditBalanceAccount(String accountId, BigDecimal amount) throws AccountNotExistException, AccountNotProcessedExeption;
+    void creditBalanceAccount(Account account, BigDecimal amount) throws AccountNotExistException, AccountNotProcessedExeption;
 
-    void debitBalanceAccount(String accountId, BigDecimal amount) throws AccountNotExistException, AccountNotProcessedExeption, OverDraftException;
+    void debitBalanceAccount(Account account, BigDecimal amount) throws AccountNotExistException, AccountNotProcessedExeption, OverDraftException;
 
     void updateAccount(Account account) throws AccountNotExistException;
 
     void clearAccounts();
 
-    void makeTransfer(String accountFromId, String accountToId, BigDecimal amount) throws AccountNotExistException, AccountNotProcessedExeption, OverDraftException;
+    void makeTransfer(Account accountFromId, Account accountToId, BigDecimal amount) throws AccountNotExistException, AccountNotProcessedExeption, OverDraftException;
 
 }
 

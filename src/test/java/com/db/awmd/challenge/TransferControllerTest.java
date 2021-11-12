@@ -58,7 +58,7 @@ public class TransferControllerTest {
 
         assertThat(this.accountsService.getAccount(ACCOUNT_FROM).getBalance()).isEqualTo(INITIAL_BALANCE_0);
         assertThat(this.accountsService.getAccount(ACCOUNT_TO).getBalance()).isEqualTo(INITIAL_BALANCE_0);
-        accountsService.creditBalanceAccount(ACCOUNT_FROM, BALANCE_10);
+        accountsService.creditBalanceAccount(account1, BALANCE_10);
 
         String exspected = "Success";
         this.mockMvc.perform(get("/v1/transfers/process/" + ACCOUNT_FROM + "/" + ACCOUNT_TO + "/" + TRANSFER_VALUE_10))
@@ -131,7 +131,7 @@ public class TransferControllerTest {
         accountsService.createAccount(account1);
         assertThat(this.accountsService.getAccount(ACCOUNT_FROM).getBalance()).isEqualTo(INITIAL_BALANCE_0);
 
-        accountsService.creditBalanceAccount(ACCOUNT_FROM, TRANSFER_VALUE_10);
+        accountsService.creditBalanceAccount(account1, TRANSFER_VALUE_10);
 
         assertThat(this.accountsService.getAccount(ACCOUNT_FROM).getBalance()).isEqualTo(TRANSFER_VALUE_10);
 
@@ -156,7 +156,7 @@ public class TransferControllerTest {
                 .andExpect(content().string(OVERDRADF_MESSAGE));
         assertThat(this.accountsService.getAccount(ACCOUNT_FROM).getBalance()).isEqualTo(INITIAL_BALANCE_0);
 
-        accountsService.creditBalanceAccount(ACCOUNT_FROM, TRANSFER_VALUE_10);
+        accountsService.creditBalanceAccount(account1, TRANSFER_VALUE_10);
 
         assertThat(this.accountsService.getAccount(ACCOUNT_FROM).getBalance()).isEqualTo(TRANSFER_VALUE_10);
 

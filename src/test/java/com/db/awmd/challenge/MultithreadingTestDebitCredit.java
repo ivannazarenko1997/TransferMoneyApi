@@ -55,8 +55,8 @@ public class MultithreadingTestDebitCredit {
         accountsService.createAccount(account1);
         accountsService.createAccount(account2);
 
-        accountsService.creditBalanceAccount(ACCOUNT_NAME_1, ACCOUNT_1_AMOUNT);
-        accountsService.creditBalanceAccount(ACCOUNT_NAME_2, ACCOUNT_2_AMOUNT);
+        accountsService.creditBalanceAccount(account1, ACCOUNT_1_AMOUNT);
+        accountsService.creditBalanceAccount(account2, ACCOUNT_2_AMOUNT);
 
         List<Callable<Transfer>> callables = new ArrayList<>();
 

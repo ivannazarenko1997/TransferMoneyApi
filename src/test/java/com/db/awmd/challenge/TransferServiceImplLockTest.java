@@ -139,7 +139,7 @@ public class TransferServiceImplLockTest {
 
         InOrder orderVerifier = Mockito.inOrder(accountsService,notificationService);
 
-        orderVerifier.verify(accountsService).makeTransfer(ACCOUNT_ONE, ACCOUNT_TWO,AMOUNT_10);
+        orderVerifier.verify(accountsService).makeTransfer(ACCOUNT_1_BALANCE_10, ACCOUNT_2_BALANCE_0,AMOUNT_10);
         orderVerifier.verify(notificationService,times(2)).notifyAboutTransfer(Mockito.any(), Mockito.any());
 
     }
@@ -172,7 +172,7 @@ public class TransferServiceImplLockTest {
 
         InOrder orderVerifier = Mockito.inOrder(accountsService,notificationService);
 
-        orderVerifier.verify(accountsService).makeTransfer( ACCOUNT_TWO,ACCOUNT_ONE,AMOUNT_10);
+        orderVerifier.verify(accountsService).makeTransfer( ACCOUNT_2_BALANCE_10,ACCOUNT_1_BALANCE_0,AMOUNT_10);
 
         orderVerifier.verify(notificationService,times(2)).notifyAboutTransfer(Mockito.any(), Mockito.any());
 

@@ -60,67 +60,64 @@ public class AccountsServiceImpl implements AccountsService {
     }
 
     @Transactional
-    public void creditBalanceAccount(String accountId, BigDecimal amount) throws AccountNotExistException ,AccountNotProcessedExeption{
+    public void creditBalanceAccount(Account account, BigDecimal amount) throws AccountNotExistException ,AccountNotProcessedExeption{
         try {
-            Account accountCredit = findAccountById(accountId);
+            Account accountCredit = findAccountById(account.getAccountId());
             accountCredit.setBalance(accountCredit.getBalance().add(amount));
             accountsRepository.updateAccount(accountCredit);
         } catch(AccountNotExistException e) {
-            log.error("Cannot process credit operation for accountId:"+accountId);
+            log.error("Cannot process credit operation for accountId:"+account.getAccountId());
             throw e;
         }catch (Exception e) {
-            log.error("Cannot process credit operation for accountId:"+accountId);
+            log.error("Cannot process credit operation for accountId:"+account.getAccountId());
             throw new AccountNotProcessedExeption("Cannot process payment");
         }
     }
 
-    @Transactional
-    public void debitBalanceAccount(String accountId, BigDecimal amount) throws AccountNotExistException,AccountNotProcessedExeption, OverDraftException {
+    private  void rollbackDebitOperation(Account account, BigDecimal amount)
+            throws AccountNotExistException ,AccountNotProcessedExeption {
+        creditBalanceAccount(account,amount);
+    }
+
+        @Transactional
+    public void debitBalanceAccount(Account account, BigDecimal amount) throws AccountNotExistException,AccountNotProcessedExeption, OverDraftException {
         try {
-            Account accountDebit = findAccountById(accountId);
+            Account accountDebit = findAccountById(account.getAccountId());
             if (accountDebit.getBalance().compareTo(amount) < 0) {
-                throw new OverDraftException("Account with id:"+accountId+" does not have enough monney for withdraw.");
+                throw new OverDraftException("Account with id:"+account.getAccountId()+" does not have enough monney for withdraw.");
             }
             accountDebit.setBalance(accountDebit.getBalance().subtract(amount));
             accountsRepository.updateAccount(accountDebit);
         } catch(AccountNotExistException | OverDraftException e) {
-            log.error("Cannot process debit operation for accountId:"+accountId);
+            log.error("Cannot process debit operation for accountId:"+account.getAccountId());
             throw e;
         }catch (Exception e) {
-            log.error("Cannot process debit operation for accountId:"+accountId);
+            log.error("Cannot process debit operation for accountId:"+account.getAccountId());
             throw new AccountNotProcessedExeption("Cannot process payment");
         }
 
     }
 
     @Transactional
-    public void makeTransfer(String accountFromId,String accountToId, BigDecimal amount) throws
+    public void makeTransfer(Account accountFrom,Account accountTo, BigDecimal amount) throws
             AccountNotExistException,AccountNotProcessedExeption, OverDraftException {
-        try{
-            debitBalanceAccount(accountFromId,amount);
-        } catch (Exception e) {
-            log.error("Cannot process debit operation for accountId.Transfer canceled.");
-            throw e;
-        }
-        Boolean isCreditOperationSuccess = false;
-
         try {
-            creditBalanceAccount(accountToId, amount);
-            isCreditOperationSuccess = true;
-        } catch (Exception e) {
-            log.error("Cannot process credit operation for account.Transfer canceled.");
-            throw e;
-        }
-
-        if (!isCreditOperationSuccess) {
+            debitBalanceAccount(accountFrom,amount);
             try {
-                creditBalanceAccount(accountFromId, amount);
+                creditBalanceAccount(accountTo, amount);
             } catch (Exception e) {
-                log.error("Cannot process rollback operation for accountid"+accountFromId+".Transfer canceled.");
-                throw new AccountNotProcessedExeption("Cannot process transfer");
+                log.error("Cannot process credit operation for account.Transfer canceled.");
+                rollbackDebitOperation(accountFrom, amount);
+                throw e;
             }
-        }
 
+        } catch(AccountNotExistException | OverDraftException e) {
+            log.error("Cannot process debit operation for accountId:"+accountFrom.getAccountId());
+            throw e;
+        }catch (Exception e) {
+            log.error("Cannot process debit operation for accountId:"+accountFrom.getAccountId());
+            throw new AccountNotProcessedExeption("Cannot process payment");
+        }
 
     }
 

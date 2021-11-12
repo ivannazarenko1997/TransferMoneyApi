@@ -130,9 +130,9 @@ public class AccountsController {
 
         validateIncomeAccountId(accountId);
         validateIncomeAmount(amount);
-
         try {
-            accountsService.creditBalanceAccount(accountId,new BigDecimal(amount));
+            Account account = accountsService.findAccountById(accountId);
+            accountsService.creditBalanceAccount(account, new BigDecimal(amount));
             return new ResponseEntity<>(accountsService.findAccountById(accountId), HttpStatus.CREATED);
         } catch ( Exception daie) {
             log.error("Cannot make deposit payment for accountId:" + accountId);
@@ -155,7 +155,8 @@ public class AccountsController {
         validateIncomeAmount(amount);
 
         try {
-            accountsService.debitBalanceAccount(accountId,new BigDecimal(amount));
+            Account account = accountsService.findAccountById(accountId);
+            accountsService.debitBalanceAccount(account,new BigDecimal(amount));
             return new ResponseEntity<>(accountsService.getAccount(accountId), HttpStatus.CREATED);
         } catch ( Exception daie) {
             log.error("Cannot make withdraw payment for accountId=" + accountId);

@@ -94,10 +94,6 @@ public class TransferServiceImpl implements TransferService {
 
             Account accountFrom = accountsService.findAccountById(transfer.getAccountFromId());
             Account accountTo = accountsService.findAccountById(transfer.getAccountToId());
-
-            final String fromAccountId = accountFrom.getAccountId();
-            final String toAccountId = accountTo.getAccountId();
-
             List<Account> sortedAccountsForLocks = getSortedAccountsBySortedId(Arrays.asList(accountFrom,accountTo));
 
             Account firstAccountLock = sortedAccountsForLocks.get(FIRST_LOCK);
@@ -112,44 +108,22 @@ public class TransferServiceImpl implements TransferService {
                     log.error("Cannot obtain lock for account");
                     break;
                 }
-
-                 synchronized(firstAccountLock) {
-                    try {
-                        log.info("Lock for accountId " + firstAccountLock.getAccountId() + " obtained");
-                        synchronized(secondAccountLock) {
-                            try {
-                                log.info("Lock for accountId " + secondAccountLock.getAccountId() + " obtained");
-                                verifyFundsSufficiency(transfer);
-                                accountsService.makeTransfer(fromAccountId, toAccountId, transfer.getAmount());
-                                isOperationSuccess = true;
-                                break;
-                            } catch (AccountNotExistException | AccountNotProcessedExeption | OverDraftException e) {
-                                log.error("Error while processing");
-                                throw e;
-                            } catch (Exception e) {
-                                log.error("Error while processing", e);
-                                throw e;
-                            }
+                synchronized(firstAccountLock) {
+                   log.info("Lock for accountId " + firstAccountLock.getAccountId() + " obtained");
+                    synchronized(secondAccountLock) {
+                        log.info("Lock for accountId " + secondAccountLock.getAccountId() + " obtained");
+                        verifyFundsSufficiency(transfer);
+                        accountsService.makeTransfer(accountFrom, accountTo, transfer.getAmount());
+                        isOperationSuccess = true;
+                        break;
                         }
-                    } catch (AccountNotExistException | AccountNotProcessedExeption | OverDraftException e) {
-                        log.error("Error while executing transfer money operation accountId from " + fromAccountId + " to " + toAccountId);
-                        throw e;
-                    } catch (Exception e) {
-                        log.error("Error while executing transfer money operation accountId from " + fromAccountId + " to " + toAccountId + " ", e);
-                        throw e;
-                    }
                 }
             }
             if (isOperationSuccess) {
-                try {
-                    tryToSendMessageToRecipients(transfer);
-                } catch (Exception e) {
-                    log.error("Error while sending notifications for accounts {} {} :{}", transfer.getAccountFromId(), transfer.getAccountToId(), e);
-                }
-
-                log.info("Money was transferred successfully [{}]", transfer.toString());
+                 tryToSendMessageToRecipients(transfer);
+                 log.info("Money was transferred successfully [{}]", transfer.toString());
             } else {
-                log.error("Cannot process transfer " + fromAccountId + " =" + toAccountId);
+                log.error("Cannot process transfer " + accountFrom.getAccountId() + " =" + accountTo.getAccountId());
                 throw new TransferNotProcessException("Cannot process pransfer");
             }
 

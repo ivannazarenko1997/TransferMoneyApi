@@ -19,8 +19,8 @@ import static org.junit.Assert.fail;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class AccountsServiceTest {
-    private static final String ACCOUNT_FROM = "acc-1";
-    private static final String ACCOUNT_TO = "acc-2";
+    private static final String ACCOUNT_FROM_ID= "acc-1";
+    private static final String ACCOUNT_TO_ID = "acc-2";
 
     private static final BigDecimal INITIAL_BALANCE_0 = new BigDecimal(0);
     private static final BigDecimal INITIAL_BALANCE_10 = new BigDecimal(10);
@@ -58,124 +58,124 @@ public class AccountsServiceTest {
     @Test
     public void shouldReturnAccount() throws Exception {
         this.accountsService.clearAccounts();
-        Account account = new Account(ACCOUNT_FROM, INITIAL_BALANCE_10);
+        Account account = new Account(ACCOUNT_FROM_ID, INITIAL_BALANCE_10);
         this.accountsService.createAccount(account);
-        assertThat(accountsService.findAccountById(ACCOUNT_FROM)).isEqualTo(account);
+        assertThat(accountsService.findAccountById(ACCOUNT_FROM_ID)).isEqualTo(account);
         this.accountsService.clearAccounts();
     }
 
     @Test(expected = AccountNotExistException.class)
     public void shouldReturnErrorAccountNotExists() throws Exception {
         this.accountsService.clearAccounts();
-        accountsService.findAccountById(ACCOUNT_FROM);
+        accountsService.findAccountById(ACCOUNT_FROM_ID);
     }
 
     @Test
     public void shouldUpdateAccount() throws Exception {
         this.accountsService.clearAccounts();
-        Account account = new Account(ACCOUNT_FROM, INITIAL_BALANCE_0);
+        Account account = new Account(ACCOUNT_FROM_ID, INITIAL_BALANCE_0);
         this.accountsService.createAccount(account);
-        assertThat(accountsService.findAccountById(ACCOUNT_FROM)).isEqualTo(account);
-        Account updatedAccount = new Account(ACCOUNT_FROM, INITIAL_BALANCE_10);
+        assertThat(accountsService.findAccountById(ACCOUNT_FROM_ID)).isEqualTo(account);
+        Account updatedAccount = new Account(ACCOUNT_FROM_ID, INITIAL_BALANCE_10);
         accountsService.updateAccount(updatedAccount);
-        assertThat(accountsService.findAccountById(ACCOUNT_FROM)).isEqualTo(updatedAccount);
+        assertThat(accountsService.findAccountById(ACCOUNT_FROM_ID)).isEqualTo(updatedAccount);
         this.accountsService.clearAccounts();
     }
 
     @Test
     public void shouldAddBalanceToAccount() throws Exception {
         this.accountsService.clearAccounts();
-        Account account = new Account(ACCOUNT_FROM, INITIAL_BALANCE_0);
-        this.accountsService.createAccount(account);
-        assertThat(accountsService.findAccountById(ACCOUNT_FROM)).isEqualTo(account);
-        this.accountsService.creditBalanceAccount(ACCOUNT_FROM, TRANSFER_VALUE_10);
-        Account accountCredited = new Account(ACCOUNT_FROM, INITIAL_BALANCE_10);
-        assertThat(accountsService.findAccountById(ACCOUNT_FROM)).isEqualTo(accountCredited);
+        Account accountFrom = new Account(ACCOUNT_FROM_ID, INITIAL_BALANCE_0);
+        this.accountsService.createAccount(accountFrom);
+        assertThat(accountsService.findAccountById(ACCOUNT_FROM_ID)).isEqualTo(accountFrom);
+        this.accountsService.creditBalanceAccount(accountFrom, TRANSFER_VALUE_10);
+        Account accountCredited = new Account(ACCOUNT_FROM_ID, INITIAL_BALANCE_10);
+        assertThat(accountsService.findAccountById(ACCOUNT_FROM_ID)).isEqualTo(accountCredited);
         this.accountsService.clearAccounts();
     }
 
     @Test
     public void shouldWithdrawBalanceFromAccount() throws Exception {
         this.accountsService.clearAccounts();
-        Account account = new Account(ACCOUNT_FROM, INITIAL_BALANCE_10);
-        this.accountsService.createAccount(account);
-        assertThat(accountsService.findAccountById(ACCOUNT_FROM)).isEqualTo(account);
-        this.accountsService.debitBalanceAccount(ACCOUNT_FROM, TRANSFER_VALUE_10);
-        Account accountDebited = new Account(ACCOUNT_FROM, INITIAL_BALANCE_0);
-        assertThat(accountsService.findAccountById(ACCOUNT_FROM)).isEqualTo(accountDebited);
+        Account accountDebit = new Account(ACCOUNT_FROM_ID, INITIAL_BALANCE_10);
+        this.accountsService.createAccount(accountDebit);
+        assertThat(accountsService.findAccountById(ACCOUNT_FROM_ID)).isEqualTo(accountDebit);
+        this.accountsService.debitBalanceAccount(accountDebit, TRANSFER_VALUE_10);
+        Account accountDebited = new Account(ACCOUNT_FROM_ID, INITIAL_BALANCE_0);
+        assertThat(accountsService.findAccountById(ACCOUNT_FROM_ID)).isEqualTo(accountDebited);
         this.accountsService.clearAccounts();
     }
 
     @Test(expected = OverDraftException.class)
     public void shouldReturnOverDraftExceptionThenWithdrawAmountWithZeroBalance() throws Exception {
         this.accountsService.clearAccounts();
-        Account account = new Account(ACCOUNT_FROM, INITIAL_BALANCE_0);
-        this.accountsService.createAccount(account);
-        assertThat(accountsService.findAccountById(ACCOUNT_FROM)).isEqualTo(account);
-        this.accountsService.debitBalanceAccount(ACCOUNT_FROM, TRANSFER_VALUE_10);
-        Account accountDebited = new Account(ACCOUNT_FROM, INITIAL_BALANCE_0);
-        assertThat(accountsService.findAccountById(ACCOUNT_FROM)).isEqualTo(accountDebited);
+        Account accountFrom = new Account(ACCOUNT_FROM_ID, INITIAL_BALANCE_0);
+        this.accountsService.createAccount(accountFrom);
+        assertThat(accountsService.findAccountById(ACCOUNT_FROM_ID)).isEqualTo(accountFrom);
+        this.accountsService.debitBalanceAccount(accountFrom, TRANSFER_VALUE_10);
+        Account accountDebited = new Account(ACCOUNT_FROM_ID, INITIAL_BALANCE_0);
+        assertThat(accountsService.findAccountById(ACCOUNT_FROM_ID)).isEqualTo(accountDebited);
         this.accountsService.clearAccounts();
     }
 
     @Test
     public void shouldProcessTransfer() throws Exception {
         this.accountsService.clearAccounts();
-        Account account = new Account(ACCOUNT_FROM, INITIAL_BALANCE_10);
-        this.accountsService.createAccount(account);
+        Account accountFrom = new Account(ACCOUNT_FROM_ID, INITIAL_BALANCE_10);
+        this.accountsService.createAccount(accountFrom);
 
-        Account account2 = new Account(ACCOUNT_TO, INITIAL_BALANCE_0);
-        this.accountsService.createAccount(account2);
+        Account accountTo = new Account(ACCOUNT_TO_ID, INITIAL_BALANCE_0);
+        this.accountsService.createAccount(accountTo);
 
-        assertThat(accountsService.findAccountById(ACCOUNT_FROM)).isEqualTo(account);
-        assertThat(accountsService.findAccountById(ACCOUNT_TO)).isEqualTo(account2);
+        assertThat(accountsService.findAccountById(ACCOUNT_FROM_ID)).isEqualTo(accountFrom);
+        assertThat(accountsService.findAccountById(ACCOUNT_TO_ID)).isEqualTo(accountTo);
 
-        this.accountsService.makeTransfer(ACCOUNT_FROM, ACCOUNT_TO, TRANSFER_VALUE_10);
+        this.accountsService.makeTransfer(accountFrom, accountTo, TRANSFER_VALUE_10);
 
-        Account accountDebited = new Account(ACCOUNT_FROM, INITIAL_BALANCE_0);
-        assertThat(accountsService.findAccountById(ACCOUNT_FROM)).isEqualTo(accountDebited);
+        Account accountDebited = new Account(ACCOUNT_FROM_ID, INITIAL_BALANCE_0);
+        assertThat(accountsService.findAccountById(ACCOUNT_FROM_ID)).isEqualTo(accountDebited);
 
-        Account accountCredited = new Account(ACCOUNT_TO, INITIAL_BALANCE_10);
-        assertThat(accountsService.findAccountById(ACCOUNT_TO)).isEqualTo(accountCredited);
+        Account accountCredited = new Account(ACCOUNT_TO_ID, INITIAL_BALANCE_10);
+        assertThat(accountsService.findAccountById(ACCOUNT_TO_ID)).isEqualTo(accountCredited);
         this.accountsService.clearAccounts();
     }
 
     @Test(expected = OverDraftException.class)
     public void shouldLeftBalancesBeforeThenReturnOverdraftException() throws Exception {
         this.accountsService.clearAccounts();
-        Account account = new Account(ACCOUNT_FROM, INITIAL_BALANCE_0);
-        this.accountsService.createAccount(account);
+        Account accountFrom = new Account(ACCOUNT_FROM_ID, INITIAL_BALANCE_0);
+        this.accountsService.createAccount(accountFrom);
 
-        Account account2 = new Account(ACCOUNT_TO, INITIAL_BALANCE_10);
-        this.accountsService.createAccount(account2);
+        Account accountTo = new Account(ACCOUNT_TO_ID, INITIAL_BALANCE_10);
+        this.accountsService.createAccount(accountTo);
 
-        assertThat(accountsService.findAccountById(ACCOUNT_FROM)).isEqualTo(account);
-        assertThat(accountsService.findAccountById(ACCOUNT_TO)).isEqualTo(account2);
+        assertThat(accountsService.findAccountById(ACCOUNT_FROM_ID)).isEqualTo(accountFrom);
+        assertThat(accountsService.findAccountById(ACCOUNT_TO_ID)).isEqualTo(accountTo);
 
-        this.accountsService.makeTransfer(ACCOUNT_FROM, ACCOUNT_TO, TRANSFER_VALUE_10);
+        this.accountsService.makeTransfer(accountFrom, accountTo, TRANSFER_VALUE_10);
 
-        Account accountDebited = new Account(ACCOUNT_FROM, INITIAL_BALANCE_0);
-        assertThat(accountsService.findAccountById(ACCOUNT_FROM)).isEqualTo(accountDebited);
+        Account accountDebited = new Account(ACCOUNT_FROM_ID, INITIAL_BALANCE_0);
+        assertThat(accountsService.findAccountById(ACCOUNT_FROM_ID)).isEqualTo(accountDebited);
 
-        Account accountCredited = new Account(ACCOUNT_TO, INITIAL_BALANCE_10);
-        assertThat(accountsService.findAccountById(ACCOUNT_TO)).isEqualTo(accountCredited);
+        Account accountCredited = new Account(ACCOUNT_TO_ID, INITIAL_BALANCE_10);
+        assertThat(accountsService.findAccountById(ACCOUNT_TO_ID)).isEqualTo(accountCredited);
         this.accountsService.clearAccounts();
     }
 
     @Test(expected = AccountNotExistException.class)
     public void shouldRollbackDebitOperationThenCreditAccountNotExist() throws Exception {
         this.accountsService.clearAccounts();
-        Account account = new Account(ACCOUNT_FROM, INITIAL_BALANCE_10);
-        this.accountsService.createAccount(account);
+        Account accountFrom = new Account(ACCOUNT_FROM_ID, INITIAL_BALANCE_10);
+        this.accountsService.createAccount(accountFrom);
+        Account accountTo = new Account(ACCOUNT_TO_ID, INITIAL_BALANCE_0);
+        assertThat(accountsService.findAccountById(ACCOUNT_FROM_ID)).isEqualTo(accountFrom);
+        assertThat(accountsService.findAccountById(ACCOUNT_TO_ID)).isEqualTo(null);
 
-        assertThat(accountsService.findAccountById(ACCOUNT_FROM)).isEqualTo(account);
-        assertThat(accountsService.findAccountById(ACCOUNT_TO)).isEqualTo(null);
+        this.accountsService.makeTransfer(accountFrom, accountTo, TRANSFER_VALUE_10);
 
-        this.accountsService.makeTransfer(ACCOUNT_FROM, ACCOUNT_TO, TRANSFER_VALUE_10);
-
-        Account accountDebited = new Account(ACCOUNT_FROM, INITIAL_BALANCE_10);
-        assertThat(accountsService.findAccountById(ACCOUNT_FROM)).isEqualTo(accountDebited);
-        assertThat(accountsService.findAccountById(ACCOUNT_TO)).isEqualTo(null);
+        Account accountDebited = new Account(ACCOUNT_FROM_ID, INITIAL_BALANCE_10);
+        assertThat(accountsService.findAccountById(ACCOUNT_FROM_ID)).isEqualTo(accountDebited);
+        assertThat(accountsService.findAccountById(ACCOUNT_TO_ID)).isEqualTo(null);
 
         this.accountsService.clearAccounts();
     }

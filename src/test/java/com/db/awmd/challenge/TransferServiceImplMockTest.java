@@ -147,11 +147,11 @@ public class TransferServiceImplMockTest {
         Transfer transfer = new Transfer(ACCOUNT_FROM, ACCOUNT_TO, AMOUNT_10);
         transferService.transferMoneyLock(transfer);
 
-        Mockito.verify(accountsService).makeTransfer(ACCOUNT_FROM, ACCOUNT_TO,AMOUNT_10);
+        Mockito.verify(accountsService).makeTransfer(ACCOUNT_1_BALANCE_10, ACCOUNT_2_BALANCE_0,AMOUNT_10);
         InOrder orderVerifier = Mockito.inOrder(accountsService,notificationService);
 
         assertTrue(ACCOUNT_FROM.hashCode()<ACCOUNT_TO.hashCode());
-        orderVerifier.verify(accountsService).makeTransfer(ACCOUNT_FROM, ACCOUNT_TO,AMOUNT_10);
+        orderVerifier.verify(accountsService).makeTransfer(ACCOUNT_1_BALANCE_10, ACCOUNT_2_BALANCE_0,AMOUNT_10);
 
         String debitMessageUser = "Monney was send from your account to acc-2 in amount 10";
         Account newDebitAccount = new Account(ACCOUNT_FROM, INITIAL_BALANCE_10);
