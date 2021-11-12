@@ -1,0 +1,46 @@
+buildscript {
+  ext {
+    springBootVersion = '1.5.4.RELEASE'
+  }
+  repositories {
+    mavenCentral()
+  }
+  dependencies {
+    classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+  }
+}
+
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'idea'
+apply plugin: 'org.springframework.boot'
+
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = 1.8
+
+repositories {
+  mavenLocal()
+  mavenCentral()
+  maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+  jcenter()
+  google()
+}
+
+dependencies {
+  compile("org.springframework.boot:spring-boot-starter-web")
+  compile("org.springframework:spring-tx")
+  compile("io.springfox:springfox-swagger2:2.7.0")
+  compile("org.slf4j:slf4j-api:1.7.3")
+  compile("org.projectlombok:lombok:1.18.16")
+  compile("org.springframework.boot:spring-boot-starter-test:2.5.5")
+  compile ("junit:junit:4.12")
+  compile ("org.mockito:mockito-core:2.7.7")
+  compile("org.springframework.boot:spring-boot-starter-test")
+}
+
+task getDeps(type: Copy) {
+  from configurations.runtime
+  into 'runtime/'
+}
+
