@@ -1,12 +1,12 @@
  
 Simple run application
 
-Use Gradle version 4.1 https://gradle.org/releases/
+Use Gradle version 4.1 https://gradle.org/releases/   
 
-1.Download jar "java-transfer-multithreading.jar" from root directory of github project. 
-2.Open "Command Line" and go to directory where "java-transfer-multithreading.jar" located. 
-3.Execute in "Command Line" following command: "java -jar java-transfer-multithreading.jar".
-4.Open any browser and put following commands:
+1.Download jar "java-transfer-multithreading.jar" from root directory of github project.     
+2.Open "Command Line" and go to directory where "java-transfer-multithreading.jar" located.    
+3.Execute in "Command Line" following command: "java -jar java-transfer-multithreading.jar".    
+4.Open any browser and put following commands:     
 
     view all accounts: http://localhost:18080/v1/accounts/all 
     create account with name "1": http://localhost:18080/v1/accounts/createAccount/1 
