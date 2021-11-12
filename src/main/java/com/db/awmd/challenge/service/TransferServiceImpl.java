@@ -18,7 +18,6 @@ import java.util.List;
 @Service
 @Slf4j
 public class TransferServiceImpl implements TransferService {
-    private static final Integer COUNT_OF_LOCK_CHECKS = 1000;
     private static final Integer FIRST_LOCK = 0;
     private static final Integer SECOND_LOCK = 1;
 
@@ -34,7 +33,6 @@ public class TransferServiceImpl implements TransferService {
         this.accountsService = accountsService;
         this.notificationService = notificationService;
     }
-
 
     private Boolean checkIfEnoughtMonneyOnAccount(String accountId, BigDecimal amount) {
         return (accountsService.findAccountById(accountId).getBalance().compareTo(amount) >= 0) ? true : false;
@@ -120,7 +118,6 @@ public class TransferServiceImpl implements TransferService {
         }
     }
 
-
     public List<Account> getSortedAccountsBySortedId(List<Account> accounts){
         Collections.sort(accounts, new Comparator<Account>() {
             public int compare(Account a1, Account a2) {
@@ -129,7 +126,6 @@ public class TransferServiceImpl implements TransferService {
         });
         return accounts;
     }
-
 
     private void verifyFundsSufficiency(Transfer transfer) {
         if (!checkIfEnoughtMonneyOnAccount(transfer.getAccountFromId(), transfer.getAmount())) {

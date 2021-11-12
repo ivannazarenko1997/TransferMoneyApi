@@ -1,7 +1,8 @@
 package com.db.awmd.challenge.web;
 
 import com.db.awmd.challenge.domain.Account;
-import com.db.awmd.challenge.exception.*;
+import com.db.awmd.challenge.exception.DuplicateAccountIdException;
+import com.db.awmd.challenge.exception.WrongFormatException;
 import com.db.awmd.challenge.service.AccountsService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -9,33 +10,26 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.math.BigDecimal;
-import java.util.concurrent.Executor;
 
 @RestController
 @RequestMapping("/v1/accounts")
 @Slf4j
 public class AccountsController {
-
     private static final String NO_ACCOUNTS_EXISTS = "No account records exists";
     private static final String ERROR_PROCESS_RESPONCE = "Error while processing data:";
-
     private static final String EMPTY_ACCOUNT_TO_VALUE = "Account is empty";
-
-    private static final String EMPTY_ACCOUNT_VALUE = "Account from is empty";
     private static final String EMPTY_AMOUNT_VALUE = "Amount is empty";
     private static final String NOT_BIGDECIMAL_FORMAT = "Amount is not big decimal format";
     private static final String AMOUNT_LESS_THEN_ZERO = "Amount is less then zero";
-    private static final String CANNOT_PROCESS_PAYMENTS = "Cannot process payment";
+
 
     private final AccountsService accountsService;
 
@@ -194,23 +188,8 @@ public class AccountsController {
         }
     }
 
-
-
-
-
-
     private Boolean checkIfEmpty(String data) {
         return (data != null && data.isEmpty()) ? true : false;
     }
 
-   @Bean(name = "threadPoolTaskExecutor")
-    public Executor asyncExecutor() {
-        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        executor.setCorePoolSize(4);
-        executor.setMaxPoolSize(4);
-        executor.setQueueCapacity(50);
-        executor.setThreadNamePrefix("AsynchThread::");
-        executor.initialize();
-        return executor;
-    }
 }
