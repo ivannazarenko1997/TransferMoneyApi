@@ -94,39 +94,21 @@ public class TransferServiceImpl implements TransferService {
 
             Account accountFrom = accountsService.findAccountById(transfer.getAccountFromId());
             Account accountTo = accountsService.findAccountById(transfer.getAccountToId());
-            List<Account> sortedAccountsForLocks = getSortedAccountsBySortedId(Arrays.asList(accountFrom,accountTo));
 
+            List<Account> sortedAccountsForLocks = getSortedAccountsBySortedId(Arrays.asList(accountFrom,accountTo));
             Account firstAccountLock = sortedAccountsForLocks.get(FIRST_LOCK);
             Account secondAccountLock = sortedAccountsForLocks.get(SECOND_LOCK);
 
-            Boolean isOperationSuccess = false;
-
-            Integer count = 0;
-            while (!isOperationSuccess) {
-                count++;
-                if (count >= COUNT_OF_LOCK_CHECKS) {
-                    log.error("Cannot obtain lock for account");
-                    break;
-                }
-                synchronized(firstAccountLock) {
-                   log.info("Lock for accountId " + firstAccountLock.getAccountId() + " obtained");
-                    synchronized(secondAccountLock) {
-                        log.info("Lock for accountId " + secondAccountLock.getAccountId() + " obtained");
-                        verifyFundsSufficiency(transfer);
-                        accountsService.makeTransfer(accountFrom, accountTo, transfer.getAmount());
-                        isOperationSuccess = true;
-                        break;
-                        }
-                }
-            }
-            if (isOperationSuccess) {
-                 tryToSendMessageToRecipients(transfer);
-                 log.info("Money was transferred successfully [{}]", transfer.toString());
-            } else {
-                log.error("Cannot process transfer " + accountFrom.getAccountId() + " =" + accountTo.getAccountId());
-                throw new TransferNotProcessException("Cannot process pransfer");
+            synchronized(firstAccountLock) {
+                log.info("Lock for accountId " + firstAccountLock.getAccountId() + " obtained");
+                synchronized(secondAccountLock) {
+                    log.info("Lock for accountId " + secondAccountLock.getAccountId() + " obtained");
+                    verifyFundsSufficiency(transfer);
+                    accountsService.makeTransfer(accountFrom, accountTo, transfer.getAmount());
+                  }
             }
 
+            tryToSendMessageToRecipients(transfer);
         } catch (AccountNotProcessedExeption | TransferNullObjectException |
                 TransferNotProcessException | OverDraftException |
                 AccountNotExistException | SameOperationalAccountException e) {
